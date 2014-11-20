@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+	
+	<!-- 任务调度相关 -->
+	
+	<bean id="quartzTest" class="com.suncafly.quartz.QuartzTest" singleton="false"></bean>
+	<bean id="testJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    	<property name="targetObject">
+    		<ref bean="quartzTest"/>
+    	</property>
+    	<property name="targetMethod">
+    		<value>execute</value>
+    	</property>
+	</bean>	
+	<bean id="testJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="testJob"/>
+		<property name="cronExpression" value="2,30 * * * * ?"/>
+	</bean>	
+	<!-- 1.秒 0-59
+             2.分钟 0-59
+             3.小时 0-23
+             4.月份中的日期 1-31
+             5.月份 1-12或者Jan Feb Mar Apr May Jun Jul Aug Sept Oct Nov Dec
+             6.星期中的日期 1-7或者MON,TUE,WED,THU,FRI,SAT,SUN.
+        -->
+	
+	<!-- 以上用Spring执行定时任务 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+			<ref bean="testJobTrigger" />
+			</list>
+		</property>
+	</bean>	
+ 	
+</beans>
